@@ -1,0 +1,141 @@
+<div class="container my-5">
+    <h3 class="text-center text-primary mb-4"><strong>FULL STACK WITH ANGULAR + SPRINGBOOT & MARIADB</strong></h3>
+
+    <div class="card p-4">
+        <div class="d-flex justify-content-center mb-3">
+          <button class="btn btn-dark mr-2 mx-2" (click)="formType = 'product'">Add Product</button>
+          <button class="btn btn-dark" (click)="formType = 'accessory'">Add Accessory</button>
+        </div>
+
+        <form (ngSubmit)="createProduct()" #productForm="ngForm">
+          <h5 class="mb-3" *ngIf="formType === 'product'" style="background-color: yellowgreen;width: 180px;">Add New Product :</h5>
+          <h5 class="mb-3" *ngIf="formType === 'accessory'" style="background-color: yellowgreen;width: 200px;">Add New Accessory :</h5>
+
+          <div class="row" >
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="model">Model</label>
+                <input type="text" class="form-control" [(ngModel)]="newProduct.model" name="newProductModel" required placeholder="Enter model name">
+              </div>
+              <div class="form-group">
+                <label for="product">Product</label>
+                <input type="text" class="form-control" [(ngModel)]="newProduct.product" name="newProductproduct" required placeholder="Enter product name">
+              </div>
+              <div class="form-group">
+                <label for="make">Make</label>
+                <input type="text" class="form-control" [(ngModel)]="newProduct.make" name="newProductMake" required placeholder="Enter product make">
+              </div>
+
+              <!-- Accessory-specific field -->
+              <div class="form-group" *ngIf="formType === 'accessory'" style="height: fit-content;">
+                <label for="newProductAccessory">Accessory</label>
+                <select 
+                    id="newProductAccessory" 
+                    class="form-control" 
+                    [(ngModel)]="newProduct.accessory" 
+                    name="newProductAccessory" 
+                    required
+                    placeholder="Enter accessory name">
+                    <option value="" disabled selected>Select an accessory</option>
+                    <option value="Bluetooth Mouse">Bluetooth Mouse</option>
+                    <option value="Bluetooth Mouse">Bluetooth Keyboard</option>
+                    <option value="Bluetooth Mouse">Wired Mouse</option>
+                    <option value="Keyboard">Keyboard</option>
+                    <option value="Headset">Headset</option>
+                    <option value="Webcam">Webcam</option>
+                    <option value="USB Hub">USB Hub</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="cost">Cost</label>
+                <input type="number" class="form-control" [(ngModel)]="newProduct.cost" name="newProductCost" required placeholder="Enter cost">
+              </div>
+              <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" class="form-control" [(ngModel)]="newProduct.quantity" name="newProductQuantity" required placeholder="Enter quantity">
+              </div>
+            </div>
+            <div class="col-md-6 text-center d-flex align-items-center justify-content-center">
+              <button class="btn btn-success btn-lg" type="submit" [disabled]="!productForm.form.valid">
+                {{ formType === 'product' ? 'Add Product' : 'Add Accessory' }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12">
+            <div *ngIf="!(products.length > 0); else productList">
+                <h3 class="text-center">No Products Available</h3>
+            </div>
+            <ng-template #productList>
+                <div class="card p-3-text-center mb-4">
+                    <h5 class="text-center mb-4">Product & Accessory List</h5>
+                    <table class="table table-striped">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th>Model</th>
+                                <th>Product</th>
+                                <th>Make</th>
+                                <th>Accessory</th>
+                                <th>Cost</th>
+                                <th>Quantity</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let product of products">
+                                <td>{{product.model}}</td>
+                                <td>{{product.product}}</td>
+                                <td>{{product.make}}</td>
+                                <td>{{product.accessory}}</td>
+                                <td>{{product.cost}}</td>
+                                <td>{{product.quantity}}</td>
+                                <td>
+                                    <button class="btn btn-info btn-sm mx-1" (click)="editProduct(product)">Edit</button>
+                                    <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.id)">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </div>
+
+        <div class="col-md-12 mt-4">
+            <div *ngIf="editingProduct" class="card p-4 ">
+                <h5 style="background-color: yellowgreen;width: 130px;">Edit Product :</h5>
+                <form (ngSubmit)="updateProduct()" >
+                    <div class="form-group">
+                        <label for="updateProduct.model">Model</label>
+                        <input type="text" [(ngModel)]="updatedProduct.model" name="updateProductModel" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateProduct.product">Product</label>
+                        <input type="text" [(ngModel)]="updatedProduct.product" name="updateProductProduct" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateProduct.make">Make</label>
+                        <input type="text" [(ngModel)]="updatedProduct.make" name="updateProductMake" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateProduct.accessory_for">Accessory</label>
+                        <input type="text" [(ngModel)]="updatedProduct.accessory" name="updateProductAccessoryFor" class="form-control" [pattern]="'^(null|[^0-9]+)?$'" placeholder="Enter 'null', empty, or a valid accessory">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateProduct.cost">Cost</label>
+                        <input type="number" [(ngModel)]="updatedProduct.cost" name="updateProductCost" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateProduct.quantity">Quantity</label>
+                        <input type="number" [(ngModel)]="updatedProduct.quantity" name="updateProductQuantity" class="form-control">
+                    </div>
+                    <div class="form-group mt-3 text-center">
+                        <button type="submit" class="btn btn-success mx-2">Save</button>
+                        <button class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
